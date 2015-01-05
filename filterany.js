@@ -28,11 +28,8 @@
 			var containers = [];
 			
 			$itemContainers.each(function(index, value){
-				var $nodes = $(value).find(settings.itemSelector, display);
-				var display = $nodes.length > 0 ? $nodes[0].style.display : 'block';
-				if ( display === 'none' ) {
-					display = 'block'
-				}
+				var $nodes = $(value).find(settings.itemSelector);
+
 				cleanNodes($nodes.toArray());
 				var textNodes = $nodes.map(function(){
 					return settings.itemTextSelector ? this.querySelector(settings.itemTextSelector) : this;
@@ -44,8 +41,7 @@
 					'containerElement': this,
 					'strings': strings,
 					'nodes': $nodes,
-					'textNodes': textNodes,
-					'display': display
+					'textNodes': textNodes
 				});
 			});
 
@@ -124,14 +120,14 @@
 			function cleanItems() {
 				for (var i = containers.length - 1; i >= 0; i--) {
 					var container = containers[i];
-					cleanNodes(container.nodes, container.display);
+					cleanNodes(container.nodes);
 				};
 			}
 
-			function cleanNodes(nodes, display, callback) {
+			function cleanNodes(nodes, callback) {
 				for (var i = nodes.length - 1; i >= 0; i--) {
 					var node = nodes[i];
-					node.style.display = display;
+					node.style.display = '';
 					var previouslyHighlighted = node.querySelectorAll('.' + settings.highlightedClass);
 					if ( !previouslyHighlighted.length ) {
 						continue;
