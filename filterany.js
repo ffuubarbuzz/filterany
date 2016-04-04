@@ -1,189 +1,230 @@
-(function( $ ) {
-	$.fn.filterAny = function( options ) {
-		
-		return this.each(function() {
-			var settings = $.extend({
-				debounceTimeout: 200,
-				highlightedClass: 'filter-highlighted',
-				inputSelector: 'input[type=search]',
-				itemsContainerSelector: 'ul',
-				itemSelector: 'li',
-				itemTextSelector: '',
-				onSearch: function() {}
-			}, options );
-
-			var $this = $(this);
-			var $input = $this.find(settings.inputSelector);
-			if ( !$input.length ) {
-				console.error('filterAny: No input found');
-				return;
-			}
-
-			var $itemContainers = $this.find(settings.itemsContainerSelector);
-			if ( !$itemContainers.length ) {
-				console.error('filterAny: No item container found');
-				return;
-			}
-
-			var containers = [];
-			
-			$itemContainers.each(function(index, value){
-				var $nodes = $(value).find(settings.itemSelector);
-
-				cleanNodes($nodes.toArray());
-				var textNodes = $nodes.map(function(){
-					return settings.itemTextSelector ? this.querySelector(settings.itemTextSelector) : this;
-				});
-				var strings = textNodes.map(function(){
-					return this.textContent;
-				});
-				containers.push({
-					'containerElement': this,
-					'strings': strings,
-					'nodes': $nodes,
-					'textNodes': textNodes
-				});
-			});
-
-			var triggerTimer;
-
-			$input.off('input.fa change.fa').on('input.fa change.fa', function(){
-				clearTimeout(triggerTimer);
-				triggerTimer = setTimeout(search, settings.debounceTimeout);
-			}).each(function(){
-				$(this.form).off('reset.fa').on('reset.fa', function(){
-					// If there are multiple filterAny instances in one form,
-					// this handler will only be called for the last one.
-					cleanItems()
-				});
-			});
-
-			if ($input.val()) {
-				search();
-			}
-
-			function search() {
-				var query = $input.val();
-				var itemsFound = [];
-				cleanItems()
-				if ( !query ) {
-					settings.onSearch.call(this, $(''));
-					return;
-				}
-
-				for (var i = containers.length - 1; i >= 0; i--) {
-					var container = containers[i];
-					var containerElement = container.containerElement;
-					var $nodes = $(container.nodes);
-					
-					// remembering container position in DOM before detaching
-					// var containerParent = containerElement.parentNode;
-					// var containerIndex = Array.prototype.indexOf.call(containerParent.childNodes, containerElement);
-					// if ( containerElement.nextSibling ) {
-					// 	var containerNextSibling = containerElement.nextSibling;
-					// }
-					// containerParent.removeChild(containerElement);
-
-					for (var j = container.strings.length - 1; j >= 0; j--) {
-						var node = container.nodes[j];
-						var textNode = container.textNodes[j];
-
-						var occurenceIndex = container.strings[j].toLowerCase().indexOf(query.toLowerCase());
-						if ( occurenceIndex === -1 ) {
-							node.style.display = 'none';
-							continue;
-						}
-						else {
-							itemsFound.push(node);
-						}
-
-						// highlighting all occurences
-						if ( settings.highlightedClass ) {
-							while (occurenceIndex != -1) {
-								highlightNode(textNode, occurenceIndex, query.length);
-								occurenceIndex = container.strings[j].toLowerCase().indexOf(query.toLowerCase(), occurenceIndex + 1);
-							}
-						}
-					};
-					//appending container back to it's origin
-					// if ( containerNextSibling ) {
-					// 	containerParent.insertBefore(containerElement, containerNextSibling);
-					// }
-					// else {
-					// 	containerParent.appendChild(containerElement)
-					// }
-				};
-
-				settings.onSearch.call(this, $(itemsFound));
-			}
-
-			function cleanItems() {
-				for (var i = containers.length - 1; i >= 0; i--) {
-					var container = containers[i];
-					cleanNodes(container.nodes);
-				};
-			}
-
-			function cleanNodes(nodes, callback) {
-				for (var i = nodes.length - 1; i >= 0; i--) {
-					var node = nodes[i];
-					node.style.display = '';
-					var previouslyHighlighted = node.querySelectorAll('.' + settings.highlightedClass);
-					if ( !previouslyHighlighted.length ) {
-						continue;
-					}
-					for (var j = previouslyHighlighted.length - 1; j >= 0; j--) {
-						var el = previouslyHighlighted[j];
-						el.parentNode.replaceChild(el.childNodes[0], el);	//unwrapping
-					};
-					node.normalize();	//concat textNodes
-				};
-			}
-
-			function findTextNode(node) {
-				var children = node.childNodes,
-					child = null,
-					textNode = null;
-				for (var i = 0; i < children.length; i++) {
-					child = children[i];
-					if ( isTextNode(child) ) {
-						return child;
-					}
-					else {
-						textNode = findTextNode(child);
-						if ( textNode ) {
-							return textNode;
-						}
-					}
-				}
-				return null;
-			}
-
-			function highlightNode(node, startIndex, length) {
-				var highlightedNode = document.createElement('mark');
-				highlightedNode.classList.add(settings.highlightedClass);
-				var highlight = document.createRange();
-				var nodes = node.childNodes;
-				var index = 0;
-				for (var i = 0; i <= nodes.length - 1; i++) {
-					var localIndex = startIndex - index;
-					if ( localIndex < 0 ) {
-						break;
-					}
-					if ( isTextNode(nodes[i]) && localIndex <= nodes[i].textContent.length-1) {
-						highlight.selectNodeContents(nodes[i]);
-						highlight.setStart(nodes[i], localIndex);
-						highlight.setEnd(nodes[i], localIndex + length);
-						highlight.surroundContents(highlightedNode);
-						break;
-					}
-					index += nodes[i].textContent.length;
-				};
-			}
-
-			function isTextNode(node) {
-				return node.nodeType === 3 && /\S/.test(node.textContent);
-			}
-		});
+(function (root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		define([], factory);
+	} else if (typeof module === 'object' && module.exports) {
+		module.exports = factory();
+	} else {
+		root.filterAny = factory();
+	}
+}(this, function () {
+	var defaults = {
+		debounceTimeout: 200,
+		highlightedClass: 'filter-highlighted',
+		inputSelector: 'input[type=search]',
+		itemContainerSelector: 'ul',
+		itemSelector: 'li',
+		itemTextSelector: '',
+		onSearch: function() {}
 	};
-}( jQuery ));
+	function highlightNode(node, startIndex, length, classList) {
+		var highlightedNode = document.createElement('mark');
+		highlightedNode.classList.add(classList);
+		var highlight = document.createRange();
+		var nodes = node.childNodes;
+		var index = 0;
+		for (var i = 0; i <= nodes.length - 1; i++) {
+			var localIndex = startIndex - index;
+			if ( localIndex < 0 ) {
+				break;
+			}
+			if ( isTextNode(nodes[i]) && localIndex <= nodes[i].textContent.length - 1) {
+				highlight.selectNodeContents(nodes[i]);
+				highlight.setStart(nodes[i], localIndex);
+				highlight.setEnd(nodes[i], localIndex + length);
+				highlight.surroundContents(highlightedNode);
+				break;
+			}
+			index += nodes[i].textContent.length;
+		};
+	}
+
+	function isTextNode(node) {
+		return node.nodeType === 3 && /\S/.test(node.textContent);
+	}
+
+	function findTextNode(node) {
+		var children = node.childNodes,
+			child = null,
+			textNode = null;
+		for (var i = 0; i < children.length; i++) {
+			child = children[i];
+			if ( isTextNode(child) ) {
+				return child;
+			}
+			else {
+				textNode = findTextNode(child);
+				if ( textNode ) {
+					return textNode;
+				}
+			}
+		}
+		return null;
+	}
+	function cleanItems(containers) {
+		for (var i = containers.length - 1; i >= 0; i--) {
+			var container = containers[i];
+			cleanNodes(container.nodes);
+		};
+	}
+
+	function cleanNodes(nodes) {
+		for (var i = nodes.length - 1; i >= 0; i--) {
+			var node = nodes[i];
+			node.style.display = '';
+			var previouslyHighlighted = node.querySelectorAll('mark');
+			if ( !previouslyHighlighted.length ) {
+				continue;
+			}
+			for (var j = previouslyHighlighted.length - 1; j >= 0; j--) {
+				var el = previouslyHighlighted[j];
+				el.parentNode.replaceChild(el.childNodes[0], el);	//unwrapping
+			};
+			node.normalize();	//concat textNodes
+		};
+	}
+
+	function search(instance) {
+		var query = instance.input.value;
+		var itemsFound = [];
+		cleanItems(instance.containers)
+		if ( !query ) {
+			instance.settings.onSearch.call(instance, null);
+			return;
+		}
+
+		for (var i = instance.containers.length - 1; i >= 0; i--) {
+			var container = instance.containers[i];
+			var containerElement = container.containerElement;
+			var nodes = container.nodes;
+			
+			// remembering container position in DOM before detaching
+			// var containerParent = containerElement.parentNode;
+			// var containerIndex = Array.prototype.indexOf.call(containerParent.childNodes, containerElement);
+			// if ( containerElement.nextSibling ) {
+			// 	var containerNextSibling = containerElement.nextSibling;
+			// }
+			// containerParent.removeChild(containerElement);
+
+			for (var j = container.strings.length - 1; j >= 0; j--) {
+				var node = container.nodes[j];
+				var textNode = container.textNodes[j];
+
+				var occurenceIndex = container.strings[j].toLowerCase().indexOf(query.toLowerCase());
+				if ( occurenceIndex === -1 ) {
+					node.style.display = 'none';
+					continue;
+				}
+				else {
+					itemsFound.push(node);
+				}
+
+				// highlighting all occurences
+				if ( instance.settings.highlightedClass ) {
+					while (occurenceIndex != -1) {
+						highlightNode(textNode, occurenceIndex, query.length, instance.settings.highlightedClass);
+						occurenceIndex = container.strings[j].toLowerCase().indexOf(query.toLowerCase(), occurenceIndex + 1);
+					}
+				}
+			};
+			//appending container back to it's origin
+			// if ( containerNextSibling ) {
+			// 	containerParent.insertBefore(containerElement, containerNextSibling);
+			// }
+			// else {
+			// 	containerParent.appendChild(containerElement)
+			// }
+		};
+
+		instance.settings.onSearch.call(this, itemsFound);
+	}
+
+	function arrayFromNodeList(nodeList) {
+		var result = new Array(nodeList.length);
+		for (var i = result.length - 1; i >= 0; i--) {
+			result[i] = nodeList[i];
+		}
+		return result;
+	}
+
+	function filterAny(element, options) {
+		if (!element) {
+			throw new Error('filterAny: firts argument expected to be Node');
+		}
+
+		this.element = element;
+		this.settings = {};
+		for (var prop in defaults) {
+			this.settings[prop] = (options && options[prop]) ? options[prop] : defaults[prop];
+		}
+	}
+
+	function onInput(instance) {
+		return function() {
+			clearTimeout(instance.triggerTimer);
+			instance.triggerTimer = setTimeout(function(){
+				search(instance);
+			}, instance.settings.debounceTimeout);
+		}
+	}
+
+	filterAny.prototype.init = function() {
+		var instance = this;
+		instance.triggerTimer;
+		instance.input = instance.element.querySelector(instance.settings.inputSelector);
+		if (!instance.input) {
+			throw new Error('filterAny: no input found (refer to option `inputSelector`)');
+		}
+		instance.itemContainerList = instance.element.querySelectorAll(instance.settings.itemContainerSelector);
+		if (!instance.itemContainerList) {
+			throw new Error('filterAny: no input found (refer to option `itemContainerSelector`)');
+		}
+		var itemContainers = arrayFromNodeList(instance.itemContainerList);
+
+		instance.containers = [];
+		itemContainers.forEach(function(itemContainer, index){
+			var nodeList = itemContainer.querySelectorAll(instance.settings.itemSelector);
+			var nodes = arrayFromNodeList(nodeList);
+
+			cleanNodes(nodes);
+			var textNodes = nodes.map(function(node){
+				return instance.settings.itemTextSelector ? node.querySelector(instance.settings.itemTextSelector) : node;
+			});
+			var strings = textNodes.map(function(textNode){
+				return textNode.textContent;
+			});
+			instance.containers.push({
+				'containerElement': this,
+				'strings': strings,
+				'nodes': nodes,
+				'textNodes': textNodes
+			});
+		});
+
+		instance.input.removeEventListener('input', onInput(instance));
+		instance.input.addEventListener('input', onInput(instance));
+
+		if (this.input.value) {
+			search(this);
+		}
+	}
+	return filterAny;
+}));
+// (function( $ ) {
+// 	$.fn.filterAny = function( options ) {
+		
+// 		return this.each(function() {
+
+			
+
+// 			$input.each(function(){
+// 				$(this.form).off('reset.fa').on('reset.fa', function(){
+// 					// If there are multiple filterAny instances in one form,
+// 					// this handler will only be called for the last one.
+// 					cleanItems(containers)
+// 				});
+// 			});
+
+			
+// 		});
+// 	};
+// }( jQuery ));
