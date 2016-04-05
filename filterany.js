@@ -101,6 +101,7 @@
 		for (var prop in defaults) {
 			this.settings[prop] = (options && options[prop]) ? options[prop] : defaults[prop];
 		}
+		this.init();
 	}
 
 	function onInput(instance) {
