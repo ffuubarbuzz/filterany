@@ -1,3 +1,4 @@
+[![GitHub version](https://badge.fury.io/gh/thirabrtnk%2Ffilterany.svg)](https://badge.fury.io/gh/thirabrtnk%2Ffilterany) [![Code Climate](https://codeclimate.com/github/ThiRaBrTNK/filterany/badges/gpa.svg)](https://codeclimate.com/github/ThiRaBrTNK/filterany)
 # FilterAny
 
 FilterAny is a JS module to filter content by user input
