@@ -1,0 +1,27 @@
+{
+  "name": "filterAny",
+  "main": "filterany.js",
+  "homepage": "https://github.com/ThiRaBrTNK/filterany",
+  "authors": [
+    "Paul Kozlovitch <paul.kozlovitch@gmail.com>"
+  ],
+  "description": "module to filter data by user input",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "filter",
+    "input",
+    "search"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
