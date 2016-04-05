@@ -1,0 +1,24 @@
+{
+  "name": "filterany",
+  "version": "0.4.1",
+  "description": "JS module to filter content by user input",
+  "main": "filterany.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ThiRaBrTNK@github.com/ThiRaBrTNK/filterany.git"
+  },
+  "keywords": [
+    "filter",
+    "input",
+    "search"
+  ],
+  "author": "Paul Kozlovitch <paul.kozlovitch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ThiRaBrTNK/filterany/issues"
+  },
+  "homepage": "https://github.com/ThiRaBrTNK/filterany#readme"
+}
