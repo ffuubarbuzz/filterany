@@ -104,7 +104,8 @@
 		this.init();
 	}
 
-	function onInput(instance) {
+	FilterAny.prototype.onInput = function() {
+		var instance = this;
 		return function() {
 			clearTimeout(instance.triggerTimer);
 			instance.triggerTimer = setTimeout(function(){
@@ -113,7 +114,8 @@
 		}
 	}
 
-	function onReset(instance) {
+	FilterAny.prototype.onReset = function() {
+		var instance = this;
 		return function(e) {
 			instance.search(instance.input.getAttribute('value'));
 		}
@@ -151,8 +153,8 @@
 				'textNodes': textNodes
 			});
 		});
-		var inputHandler = onInput(instance);
-		var resetHandler = onReset(instance);
+		var inputHandler = this.onInput(instance);
+		var resetHandler = this.onReset(instance);
 		instance.input.removeEventListener('input', inputHandler);
 		instance.input.addEventListener('input', inputHandler);
 		var form = instance.input.form;
