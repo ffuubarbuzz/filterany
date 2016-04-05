@@ -4,7 +4,7 @@
 	} else if (typeof module === 'object' && module.exports) {
 		module.exports = factory();
 	} else {
-		root.filterAny = factory();
+		root.FilterAny = factory();
 	}
 }(this, function () {
 	var defaults = {
@@ -91,9 +91,9 @@
 		return result;
 	}
 
-	function filterAny(element, options) {
+	function FilterAny(element, options) {
 		if (!element) {
-			throw new Error('filterAny: firts argument expected to be Node');
+			throw new Error('FilterAny: firts argument expected to be Node');
 		}
 
 		this.element = element;
@@ -119,16 +119,16 @@
 		}
 	}
 
-	filterAny.prototype.init = function() {
+	FilterAny.prototype.init = function() {
 		var instance = this;
 		instance.triggerTimer;
 		instance.input = instance.element.querySelector(instance.settings.inputSelector);
 		if (!instance.input) {
-			throw new Error('filterAny: no input found (refer to option `inputSelector`)');
+			throw new Error('FilterAny: no input found (refer to option `inputSelector`)');
 		}
 		instance.itemContainerList = instance.element.querySelectorAll(instance.settings.itemContainerSelector);
 		if (!instance.itemContainerList) {
-			throw new Error('filterAny: no input found (refer to option `itemContainerSelector`)');
+			throw new Error('FilterAny: no input found (refer to option `itemContainerSelector`)');
 		}
 		var itemContainers = arrayFromNodeList(instance.itemContainerList);
 
@@ -168,7 +168,7 @@
 
 
 
-	filterAny.prototype.search = function(query) {
+	FilterAny.prototype.search = function(query) {
 		var instance = this;
 		var itemsFound = [];
 		cleanItems(instance.containers)
@@ -223,5 +223,5 @@
 		instance.settings.onSearch.call(this, itemsFound);
 	}
 
-	return filterAny;
+	return FilterAny;
 }));
