@@ -35,7 +35,7 @@
 				break;
 			}
 			index += nodes[i].textContent.length;
-		};
+		}
 	}
 
 	function isTextNode(node) {
@@ -64,7 +64,7 @@
 		for (var i = containers.length - 1; i >= 0; i--) {
 			var container = containers[i];
 			cleanNodes(container.nodes);
-		};
+		}
 	}
 
 	function cleanNodes(nodes) {
@@ -78,9 +78,9 @@
 			for (var j = previouslyHighlighted.length - 1; j >= 0; j--) {
 				var el = previouslyHighlighted[j];
 				el.parentNode.replaceChild(el.childNodes[0], el);	//unwrapping
-			};
+			}
 			node.normalize();	//concat textNodes
-		};
+		}
 	}
 
 	function arrayFromNodeList(nodeList) {
@@ -123,7 +123,6 @@
 
 	FilterAny.prototype.init = function() {
 		var instance = this;
-		instance.triggerTimer;
 		instance.input = instance.element.querySelector(instance.settings.inputSelector);
 		if (!instance.input) {
 			throw new Error('FilterAny: no input found (refer to option `inputSelector`)');
@@ -168,8 +167,6 @@
 		}
 	}
 
-
-
 	FilterAny.prototype.search = function(query) {
 		var instance = this;
 		var itemsFound = [];
@@ -178,6 +175,8 @@
 			instance.settings.onSearch.call(instance, null);
 			return;
 		}
+
+		instance.input.value = query;
 
 		for (var i = instance.containers.length - 1; i >= 0; i--) {
 			var container = instance.containers[i];
@@ -207,12 +206,12 @@
 
 				// highlighting all occurences
 				if ( instance.settings.highlightedClass ) {
-					while (occurenceIndex != -1) {
+					while (occurenceIndex !== -1) {
 						highlightNode(textNode, occurenceIndex, query.length, instance.settings.highlightedClass);
 						occurenceIndex = container.strings[j].toLowerCase().indexOf(query.toLowerCase(), occurenceIndex + 1);
 					}
 				}
-			};
+			}
 			//appending container back to it's origin
 			// if ( containerNextSibling ) {
 			// 	containerParent.insertBefore(containerElement, containerNextSibling);
