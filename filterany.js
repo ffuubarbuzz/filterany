@@ -172,7 +172,7 @@
 		var itemsFound = [];
 		cleanItems(instance.containers)
 		if ( !query ) {
-			instance.settings.onSearch.call(instance, null);
+			instance.settings.onSearch.call(null);
 			return;
 		}
 
@@ -221,7 +221,7 @@
 			// }
 		}
 
-		instance.settings.onSearch.call(this, itemsFound);
+		instance.settings.onSearch.call(itemsFound);
 	}
 
 	return FilterAny;
