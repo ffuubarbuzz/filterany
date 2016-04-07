@@ -140,26 +140,27 @@
 		var itemContainers = arrayFromNodeList(this.itemContainerList);
 
 		this.containers = [];
+		var instance = this;
 		itemContainers.forEach(function(itemContainer, index){
-			var nodeList = itemContainer.querySelectorAll(this.settings.itemSelector);
+			var nodeList = itemContainer.querySelectorAll(instance.settings.itemSelector);
 			var nodes = arrayFromNodeList(nodeList);
 
 			cleanNodes(nodes);
 			var textNodes = nodes.map(function(node){
-				return this.settings.itemTextSelector ? node.querySelector(this.settings.itemTextSelector) : node;
+				return instance.settings.itemTextSelector ? node.querySelector(instance.settings.itemTextSelector) : node;
 			});
 			var strings = textNodes.map(function(textNode){
 				return textNode.textContent;
 			});
-			this.containers.push({
+			instance.containers.push({
 				'containerElement': this,
 				'strings': strings,
 				'nodes': nodes,
 				'textNodes': textNodes
 			});
 		});
-		var inputHandler = this.onInput(instance);
-		var resetHandler = this.onReset(instance);
+		var inputHandler = this.onInput();
+		var resetHandler = this.onReset();
 		this.input.removeEventListener('input', inputHandler);
 		this.input.addEventListener('input', inputHandler);
 		var form = this.input.form;
