@@ -110,11 +110,16 @@
 
 	FilterAny.prototype.onInput = function() {
 		var instance = this;
-		return function() {
-			clearTimeout(instance.triggerTimer);
-			instance.triggerTimer = setTimeout(function(){
-				instance.search(instance.input.value);
-			}, instance.settings.debounceTimeout);
+		function handler() {
+			instance.search(instance.input.value);
+		}
+		if (instance.settings.debounceTimeout) {
+			return function() {
+				clearTimeout(instance.triggerTimer);
+				instance.triggerTimer = setTimeout(handler, instance.settings.debounceTimeout);
+			}
+		} else {
+			return handler;
 		}
 	}
 
