@@ -109,8 +109,9 @@
 	}
 
 	FilterAny.prototype.onInput = function() {
+		var instance = this;
 		function handler() {
-			this.search(this.input.value);
+			instance.search(instance.input.value);
 		}
 		if (this.settings.debounceTimeout) {
 			return function() {
