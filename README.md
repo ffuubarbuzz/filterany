@@ -43,7 +43,7 @@ var filter = new FilterAny(filterable);
 
 ## API
 
-### new FilterAny(element, [options])
+### [new ]FilterAny(element, [options])
 
 Creates new instance of FilterAny. `element` is a DOM Node, which includes input element and all filterable elements.
 Options is a [settings object](#options)
