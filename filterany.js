@@ -8,7 +8,7 @@
 	}
 }(this, function () {
 	var defaults = {
-		debounceTimeout: 200,
+		debounceTimeout: 0,
 		highlightedClass: 'filter-highlighted',
 		inputSelector: 'input[type=search]',
 		itemContainerSelector: 'ul',
