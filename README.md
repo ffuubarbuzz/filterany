@@ -3,6 +3,10 @@
 
 FilterAny is a JS module to filter content by user input
 
+![Demo](demo.gif)
+
+[**Live demo**](https://thirabrtnk.github.io/filterany/)
+
 ## Why yet-another-filter-module?
 
 - **Really fast**: Built to gain max performance
@@ -10,6 +14,11 @@ FilterAny is a JS module to filter content by user input
 - **Lightweight**: ~1.3Kb minified and gzipped
 - **No dependencies**: Vanilla JS and nothing more
 - **Module for anything**: AMD/CommonJS/Nothing
+
+## TODO
+
+- 'No results' message
+- Fuzzy search
 
 ## Installation
 
