@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+	<style>
+		*,
+		*::before,
+		*::after {
+			box-sizing: inherit;
+		}
+		html {
+			font-family: 'Roboto', sans-serif;
+			background: #eee;
+			height: 100%;
+			box-sizing: border-box;
+			font-size: 14px;
+		}
+		body {
+			min-height: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			margin: 0;
+		}
+		.sample-form {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			background: #fff;
+			border-radius: 5px;
+			box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.25);
+			padding: 2em;
+			width: 700px;
+			margin: 2em;
+		}
+		.sample-form__title {
+			width: 100%;
+			text-align: center;
+			font-weight: normal;
+			margin: 0 0 .3em;
+		}
+		.sample-form__reset {
+			width: 100%;
+			margin: 1rem;
+			padding: 0;
+			background: none;
+			height: 48px;
+			line-height: 46px;
+			border: 1px solid #dcdade;
+			color: #a09ea3;
+			font-size: 1rem;
+		}
+		.sample-form__reset::before,
+		.sample-form__reset::after {
+			content: '×';
+			font-weight: bold;
+			margin: 0 1rem;
+		}
+		.filterable {
+			flex: 1 0 0;
+			margin: 0 1em;
+		}
+		.filterable__title {
+			margin: 0 0 .2em;
+			font-size: 1.5em;
+			font-weight: normal;
+		}
+		.filterable__input {
+			width: 100%;
+			border: 1px solid;
+			margin: 1em 0;
+			border: 1px solid #b8b6bc;
+			padding: 1em;
+			font-size: 1em;
+			border-radius: 2px;
+		}
+		.filterable__list {
+			border: 1px solid #a09ea3;
+			overflow: auto;
+			height: 200px;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.filterable__item {
+			padding: .3em;
+		}
+	</style>
+</head>
+<body>
+	<form class="sample-form">
+		<h1 class="sample-form__title">Some form</h1>
+		<article class="filterable">
+			<h1 class="filterable__title">One filterable thing</h1>
+			<input type="search" value="" class="filterable__input" placeholder="Type to filter">
+			<ul class="filterable__list">
+				<li class="filterable__item">Lorem ipsum</li>
+				<li class="filterable__item">dolor sit amet</li>
+				<li class="filterable__item">consectetur adipisicing</li>
+				<li class="filterable__item">elit. Vitae</li>
+				<li class="filterable__item">optio repellat</li>
+				<li class="filterable__item">dolorem, accusamus</li>
+				<li class="filterable__item">quo ipsa quidem</li>
+				<li class="filterable__item">asperiores sapiente</li>
+				<li class="filterable__item">impedit. Qui incidunt</li>
+				<li class="filterable__item">harum dolor</li>
+				<li class="filterable__item">ex unde inventore</li>
+				<li class="filterable__item">veniam officia,</li>
+				<li class="filterable__item">vero velit.</li>
+			</ul>
+		</article>
+		
+		<article class="filterable">
+			<h1 class="filterable__title">Another filterable thing</h1>
+			<input type="search" value="lor" class="filterable__input" placeholder="Type to filter">
+			<ul class="filterable__list">
+				<li class="filterable__item">Lorem ipsum</li>
+				<li class="filterable__item">dolor sit amet</li>
+				<li class="filterable__item">consectetur adipisicing</li>
+				<li class="filterable__item">elit. Vitae</li>
+				<li class="filterable__item">optio repellat</li>
+				<li class="filterable__item">dolorem, accusamus</li>
+				<li class="filterable__item">quo ipsa quidem</li>
+				<li class="filterable__item">asperiores sapiente</li>
+				<li class="filterable__item">impedit. Qui incidunt</li>
+				<li class="filterable__item">harum dolor</li>
+				<li class="filterable__item">ex unde inventore</li>
+				<li class="filterable__item">veniam officia,</li>
+				<li class="filterable__item">vero velit.</li>
+			</ul>
+		</article>
+		<button type="reset" class="sample-form__reset">reset form to default values</button>
+	</form>
+	<script src="filterany.js"></script>
+	<script>
+		var filterables = document.querySelectorAll('.filterable');
+		Array.prototype.forEach.call(filterables, function(filterable){
+			FilterAny(filterable, {
+				'debounceTimeout': 0
+			});
+		});
+	</script>
+</body>
+</html>
