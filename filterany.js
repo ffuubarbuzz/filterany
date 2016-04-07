@@ -96,6 +96,10 @@
 			throw new Error('FilterAny: firts argument expected to be Node');
 		}
 
+		if (!(this instanceof FilterAny)) {
+			return (new FilterAny(element, options)).init();
+		}
+
 		this.element = element;
 		this.settings = {};
 		for (var prop in defaults) {
