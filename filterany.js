@@ -8,7 +8,7 @@
 	}
 }(this, function () {
 	var defaults = {
-		debounceTimeout: 200,
+		debounceTimeout: 0,
 		highlightedClass: 'filter-highlighted',
 		inputSelector: 'input[type=search]',
 		itemContainerSelector: 'ul',
@@ -103,53 +103,55 @@
 		this.element = element;
 		this.settings = {};
 		for (var prop in defaults) {
-			this.settings[prop] = (options && options[prop]) ? options[prop] : defaults[prop];
+			this.settings[prop] = (options && options[prop] !== undefined) ? options[prop] : defaults[prop];
 		}
 		this.init();
 	}
 
 	FilterAny.prototype.onInput = function() {
-		var instance = this;
-		return function() {
-			clearTimeout(instance.triggerTimer);
-			instance.triggerTimer = setTimeout(function(){
-				instance.search(instance.input.value);
-			}, instance.settings.debounceTimeout);
+		function handler() {
+			this.search(this.input.value);
+		}
+		if (this.settings.debounceTimeout) {
+			return function() {
+				clearTimeout(this.triggerTimer);
+				this.triggerTimer = setTimeout(handler, this.settings.debounceTimeout);
+			}
+		} else {
+			return handler;
 		}
 	}
 
 	FilterAny.prototype.onReset = function() {
-		var instance = this;
 		return function(e) {
-			instance.search(instance.input.getAttribute('value'));
+			this.search(this.input.getAttribute('value'));
 		}
 	}
 
 	FilterAny.prototype.init = function() {
-		var instance = this;
-		instance.input = instance.element.querySelector(instance.settings.inputSelector);
-		if (!instance.input) {
+		this.input = this.element.querySelector(this.settings.inputSelector);
+		if (!this.input) {
 			throw new Error('FilterAny: no input found (refer to option `inputSelector`)');
 		}
-		instance.itemContainerList = instance.element.querySelectorAll(instance.settings.itemContainerSelector);
-		if (!instance.itemContainerList) {
+		this.itemContainerList = this.element.querySelectorAll(this.settings.itemContainerSelector);
+		if (!this.itemContainerList) {
 			throw new Error('FilterAny: no input found (refer to option `itemContainerSelector`)');
 		}
-		var itemContainers = arrayFromNodeList(instance.itemContainerList);
+		var itemContainers = arrayFromNodeList(this.itemContainerList);
 
-		instance.containers = [];
+		this.containers = [];
 		itemContainers.forEach(function(itemContainer, index){
-			var nodeList = itemContainer.querySelectorAll(instance.settings.itemSelector);
+			var nodeList = itemContainer.querySelectorAll(this.settings.itemSelector);
 			var nodes = arrayFromNodeList(nodeList);
 
 			cleanNodes(nodes);
 			var textNodes = nodes.map(function(node){
-				return instance.settings.itemTextSelector ? node.querySelector(instance.settings.itemTextSelector) : node;
+				return this.settings.itemTextSelector ? node.querySelector(this.settings.itemTextSelector) : node;
 			});
 			var strings = textNodes.map(function(textNode){
 				return textNode.textContent;
 			});
-			instance.containers.push({
+			this.containers.push({
 				'containerElement': this,
 				'strings': strings,
 				'nodes': nodes,
@@ -158,32 +160,31 @@
 		});
 		var inputHandler = this.onInput(instance);
 		var resetHandler = this.onReset(instance);
-		instance.input.removeEventListener('input', inputHandler);
-		instance.input.addEventListener('input', inputHandler);
-		var form = instance.input.form;
+		this.input.removeEventListener('input', inputHandler);
+		this.input.addEventListener('input', inputHandler);
+		var form = this.input.form;
 		if ( form ) {
 			form.removeEventListener('reset', resetHandler);
 			form.addEventListener('reset', resetHandler);
 		}
 
 		if (this.input.value) {
-			this.search(instance.input.value);
+			this.search(this.input.value);
 		}
 	}
 
 	FilterAny.prototype.search = function(query) {
-		var instance = this;
 		var itemsFound = [];
-		cleanItems(instance.containers)
+		cleanItems(this.containers)
 		if ( !query ) {
-			instance.settings.onSearch.call(null);
+			this.settings.onSearch.call(null);
 			return;
 		}
 
-		instance.input.value = query;
+		this.input.value = query;
 
-		for (var i = instance.containers.length - 1; i >= 0; i--) {
-			var container = instance.containers[i];
+		for (var i = this.containers.length - 1; i >= 0; i--) {
+			var container = this.containers[i];
 			var containerElement = container.containerElement;
 			var nodes = container.nodes;
 			
@@ -209,9 +210,9 @@
 				}
 
 				// highlighting all occurences
-				if ( instance.settings.highlightedClass ) {
+				if ( this.settings.highlightedClass ) {
 					while (occurenceIndex !== -1) {
-						highlightNode(textNode, occurenceIndex, query.length, instance.settings.highlightedClass);
+						highlightNode(textNode, occurenceIndex, query.length, this.settings.highlightedClass);
 						occurenceIndex = container.strings[j].toLowerCase().indexOf(query.toLowerCase(), occurenceIndex + 1);
 					}
 				}
@@ -225,7 +226,7 @@
 			// }
 		}
 
-		instance.settings.onSearch.call(itemsFound);
+		this.settings.onSearch.call(itemsFound);
 	}
 
 	return FilterAny;
