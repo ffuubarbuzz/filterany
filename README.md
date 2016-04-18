@@ -119,3 +119,7 @@ If there is no one element containing only text, matches highlighting won't work
 * Type: `Function`
 
 Callback function to be run after filtering is done. Receives array of matching elements.
+
+## License
+
+The code is available under the [MIT license](LICENSE.txt).
