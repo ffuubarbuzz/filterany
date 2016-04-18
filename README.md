@@ -122,4 +122,4 @@ Callback function to be run after filtering is done. Receives array of matching 
 
 ## License
 
-The code is available under the [MIT license](LICENSE.txt).
+The code is available under the [MIT license](LICENSE.md).
