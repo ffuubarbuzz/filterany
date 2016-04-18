@@ -124,8 +124,9 @@
 	}
 
 	FilterAny.prototype.onReset = function() {
+		var instance = this;
 		return function(e) {
-			this.search(this.input.getAttribute('value'));
+			instance.search(instance.input.getAttribute('value'));
 		}
 	}
 
