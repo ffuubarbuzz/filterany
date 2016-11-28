@@ -116,7 +116,7 @@
 		if (this.settings.debounceTimeout) {
 			return function() {
 				clearTimeout(this.triggerTimer);
-				this.triggerTimer = setTimeout(handler, this.settings.debounceTimeout);
+				this.triggerTimer = setTimeout(handler, instance.settings.debounceTimeout);
 			}
 		} else {
 			return handler;
