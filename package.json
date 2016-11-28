@@ -1,6 +1,6 @@
 {
   "name": "filterany",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "JS module to filter content by user input",
   "main": "filterany.js",
   "scripts": {
